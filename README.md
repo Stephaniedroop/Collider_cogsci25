@@ -15,7 +15,7 @@ Experiment scripts are html, raw JS and JSPsych.
 ## How to run
 
 - For **analysis** go to the `Main_scripts` folder and run `masterscript.R`, or if you know what script you are looking for you can go straight there and run that only. See list of scripts below.
-- To see the behavioural experiment at https://eco.ppls.ed.ac.uk/~s0342840/collidern/collidertop.html. Code for the task interface and structure of running it in JavaScript in in the folder `Experiment`. To click through the experiment: at the comprehension check enter Yes, No, True, 12.
+- To see the behavioural experiment at https://eco.ppls.ed.ac.uk/~s0342840/collider/collidertop.html. Code for the task interface and structure of running it in JavaScript in in the folder `Experiment`. To click through the experiment: at the comprehension check enter Yes, No, True, 12.
 
 ## Files, folders, model
 
@@ -27,7 +27,7 @@ The masterscript sources scripts in the following order:
 
 1. Processing behavioural experiment data (see folder `Experiment` for the JS code of experiment):
 
-- `mainbatch_preprocessing.R` - get the participants' behavioural experiment data ready.
+- `preprocessing.R` - Collates individual data csvs of both main batch and pilot.
 
 2. Setting up Collider worlds and getting model predictions for them:
 
