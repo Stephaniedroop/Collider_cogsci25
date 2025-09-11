@@ -25,6 +25,7 @@ source(knitr::purl('reportingFigs.Rmd'))
 # A continuation of this project from spring 2025 onwards had a parameter, 'K'.
 # If you want that version, go to repo `collider_cognition`.
 
+# These haven't been updated since early 2025, who knows what they contain, sorry xx
 source(knitr::purl('itemLevelChisq.Rmd')) # Check ppt n against a uniform distribution
 source(knitr::purl('abnormalInflation.Rmd')) # Is the phenomenon found in our results?
 

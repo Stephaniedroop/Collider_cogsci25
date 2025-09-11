@@ -1,31 +1,19 @@
----
-title: "modelfitplots"
-output: html_document
-date: "2025-03-12"
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE---------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 rm(list=ls())
-```
 
-# Summary
 
-Takes model and data in csv called `fitforplot.csv` which was made in `optimise.Rmd`. 
-
-THIS IS AN OLD SCRIPT: MORE PLOTS ADDED AND EASIER TO USE SEPT 2025 (see Collider_cognition) repo; will try to update here soon too 
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 library(RColorBrewer)
 library(tidyverse)
 rm(list=ls())
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 df <- read.csv('fitforplot.csv') 
-```
 
-```{r, include=FALSE}
+
+## ----include=FALSE----------------------------------------------------------------------------------------------
 # Very clunky - later we put this in the preprocessing step and save as RDS to keep formatting
 df$trial_type <- recode(df$trial_id, 
                       "1_c1"="A=0,B=0,E=0",
@@ -131,13 +119,9 @@ df<- df %>% mutate(trial_type = factor(trial_type, levels = c("A=0,B=0,E=0",
                    Variable = factor(substr(node3, 1, 1)),
                    #State = factor(rep(c(0,1), 144)),
                    Actual = factor(Actual, levels = c(FALSE, TRUE), labels = c('FALSE', 'TRUE')))
-```
 
-### So now to plot! Fig.3
 
-Need to add SE 
-
-```{r}
+## ---------------------------------------------------------------------------------------------------------------
 df$SE <- NA
 
 for (i in unique(df$trial_id))
@@ -145,11 +129,9 @@ for (i in unique(df$trial_id))
   df$SE[df$trial_id==i]<-sqrt((df$prop[df$trial_id==i] * (1-df$prop[df$trial_id==i])) / sum(df$n[df$trial_id==i]))
 }
 
-```
 
-This is for pgroup3: full model
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 ggplot(df %>% filter(pgroup=='A=.1,Au=.7,B=.8,Bu=.5'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
   geom_bar(stat = 'identity') +
   geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2) + 
@@ -166,17 +148,13 @@ ggplot(df %>% filter(pgroup=='A=.1,Au=.7,B=.8,Bu=.5'), aes(x=node3, y=prop, fill
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         legend.margin=margin(c(0,0,0,0)),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
-```
 
-# These are what we are calling the main results: the ones easiest to report on because of the differing parameter values
 
-```{r}
+## ---------------------------------------------------------------------------------------------------------------
 ggsave('../Figs/results_setting3.pdf', width = 12, height = 4)
-```
 
-# Do same for other pgroups
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 ggplot(df %>% filter(pgroup=='A=.1,Au=.5,B=.8,Bu=.5'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
   geom_bar(stat = 'identity') +
   geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2) + 
@@ -194,14 +172,13 @@ ggplot(df %>% filter(pgroup=='A=.1,Au=.5,B=.8,Bu=.5'), aes(x=node3, y=prop, fill
         legend.margin=margin(c(0,0,0,0)),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
 
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 ggsave('../Figs/results_setting1.pdf', width = 12, height = 4)
-```
 
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 ggplot(df %>% filter(pgroup=='A=.5,Au=.1,B=.5,Bu=.8'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
   geom_bar(stat = 'identity') +
   geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2) + 
@@ -219,20 +196,13 @@ ggplot(df %>% filter(pgroup=='A=.5,Au=.1,B=.5,Bu=.8'), aes(x=node3, y=prop, fill
         legend.margin=margin(c(0,0,0,0)),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
 
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 ggsave('../Figs/results_setting2.pdf', width = 12, height = 4)
-```
 
 
-(We also plan a shiny app to compare other model predictions, check back later to see if we've done it yet)
-
-# Fig 4 - just the 111 for abnormal inflation
-
-For now just 'simple 111' and 'obs un'
-
-```{r}
+## ---------------------------------------------------------------------------------------------------------------
 row_labeller <- c(
   "A=.1,Au=.5,B=.8,Bu=.5"=".1,.5,.8,.5",
   "A=.5,Au=.1,B=.5,Bu=.8"=".5,.1,.5,.8",
@@ -243,9 +213,9 @@ column_labeller <- c(
   "Conjunctive: A=1,B=1,E=1"="Conjunctive",
   "Disjunctive: A=1,B=1,E=1"="Disjunctive"
 )
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 ggplot(df %>% filter(trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1"), Actual == T),
        aes(x=Variable, y=prop, fill=Observed)) +
   geom_bar(stat = 'identity', colour = 'black', position = position_dodge()) +
@@ -261,14 +231,13 @@ ggplot(df %>% filter(trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Di
   theme(panel.grid = element_blank(),
         legend.position = 'none',
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 ggsave('../Figs/results_simple_111.pdf', width = 3, height = 3)   
-```
 
 
-```{r}
+## ---------------------------------------------------------------------------------------------------------------
 df.l<-df %>% 
   gather(key, val, c(prop, full)) %>% 
   mutate(key = factor(key, 
@@ -276,9 +245,9 @@ df.l<-df %>%
                       labels = c("Participants", "Full Model"))) %>%
   group_by(Observed, key, trial_structure_type) %>% 
   summarise(val = sum(val)/3)
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 ggplot(df.l, aes(y=val, x=key, fill=Observed)) +
   stat_summary(fun = mean,
                geom = "bar",
@@ -292,8 +261,8 @@ stat_summary(fun.data = mean_se, geom = "errorbar",  position = position_dodge(.
         legend.margin=margin(c(0,0,0,0)),
         legend.position = c(-.1,-.2),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 ggsave('../Figs/results_obs_un.pdf', width = 2, height = 3)  
-```
+
