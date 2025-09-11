@@ -18,11 +18,9 @@ source('modelProcessing.R') # Takes average of 10 model runs, wrangles, splits o
 
 # -------------3. Results: fit model, compare predictions, plot etc
 
-source(knitr::purl('modelCombLesions.Rmd')) # puts the processed model predictions together with lesions to get a df called 'modelAndDataUnfit.csv'
-# That is then sent to a few different scripts, following structure of paper:
-
-source(knitr::purl('optimise_noK.Rmd')) # Get predictions and optimise: Get nll and tau for each model
-source(knitr::purl('reportingFigsnoK.Rmd')) 
+source(knitr::purl('modelCombLesions.Rmd')) # modules and lesions put with bytrial participant data, to get a df called 'modelAndDataUnfit.csv'
+source(knitr::purl('optimise.Rmd')) # Get predictions and optimise: Get nll and tau for each model
+source(knitr::purl('reportingFigs.Rmd')) 
 
 # A continuation of this project from spring 2025 onwards had a parameter, 'K'.
 # If you want that version, go to repo `collider_cognition`.

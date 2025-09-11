@@ -31,12 +31,16 @@ The masterscript sources scripts in the following order:
 
 2. Setting up Collider worlds and getting model predictions for them:
 
-- `set_params.R` - small script to set the different probabilities we want to manipulate for the model and experiment
+- `setParams.R` - small script to set the different probabilities we want to manipulate for the model and experiment
 - `getModelPreds.R` - get model predictions
 - `functionsN2.R` - static script of functions used to set up the worlds and run the CESM model
-- `modpred_processing2.R` - get the model predictions in a user-friendly format: Wrangles and renames variables, splits out node values 0 and 1
+- `modelProcessing.R` - get the model predictions in a user-friendly format: Wrangles and renames variables, splits out node values 0 and 1
 
-3.
+3. Lesioning models, combining with participants, optimising, plotting
+
+- `modelCombLesions.Rmd`
+- `optimise.Rmd`
+- `reportingFigs.Rmd`
 
 ### FOLDER Experiment
 
@@ -57,14 +61,7 @@ Some everyday words have a special sense in this project.
 - `world` - a setting of observed node variables A and B, and outcome E set by deterministic structural equations. A single iteration of how things started off and turned out. Each node can take 0 or 1. Sometimes represented by the values of A,B,E in order, eg. 110 means A=1, B=1, E=0, ie. that A and B both happened and the effect didn't.
 - #TO DO
 
-## What is a Collider and why is it important?
-
-## Glossary
-
-Some everyday words have a special sense in this project.
-
-- `world` - a setting of node variables A and B, and outcome E, a single iteration of how things started off and turned out. Each node can take 0 or 1. Sometimes represented by the values of A,B,E in order, eg. 110 means A=1, B=1, E=0, or that A and B both happened and the effect didn't.
--
+## What is a Collider and why is it important? [OLD - TO UPDATE ]
 
 When two possible causes, A and B, can both cause effect E. It can be either conjunctive (A _and_ B needed for E) or disjunctive (A _or_ B needed for E). It's a good toy scenario to get a model working. It seems that when several things can potentially cause an outcome, and people want to decide what specifically caused it _this time_, they pick the thing that reliably occurs at the same time as the effect.
 

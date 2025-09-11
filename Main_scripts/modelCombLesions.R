@@ -1,21 +1,12 @@
----
-title: "Combine model with ppt and lesion model"
-output: html_document
-date: "2024-10-10"
-#params: 
-  #stab: 0.7
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE---------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(stringr)
 # Script takes the processed data from the ppt expt (`DATA.RDATA`)
 # and combines it with the preprocessed model predictions from `modelProcessing.R` (`tidiedPreds.csv`)
-```
 
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 load('../Data/Data.Rdata', verbose = T) # This is one big df, 'data', 3408 obs of 18 ie. 284 ppts
 mp <- read.csv('../Model_data/tidiedPreds.csv') # 576 of 26 - 576 rows because: 3 pgroups x 12 trialtypes x 4 nodes x 4 prior possible settings of unobserved variables  
 
@@ -25,30 +16,9 @@ mp$trialtype <- as.factor(mp$trialtype)
 mp$structure <- as.factor(mp$structure)
 mp$E.x <- as.factor(mp$E.x)
 mp$E.y <- as.factor(mp$E.y)
-```
-
-Now the models. To get the Full model, we take the CES scores calculated before and imported above, then treat them for Actual Causation and Inference here. 
-(The later project extension adds a new parameter, kappa, and Total Variation distance between prior and posterior, but that's not important right now).
-
-The model list for progressively lesioning the three modules CES/causal selection, Actual and Inference is:
-
-full
-noAct
-noInf
-NoSelect
-noActnoInf
-noActnoSelect
-noActnoInfnoSelect
-noInfnoSelect
 
 
-### CESM model, with actual causation treatment
-
-We want to allocate a cause as Actual when:
-1) it equals the Effect
-2) unobserved variable can only follow main variable
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 
 # Condition 1
 mp <- mp %>% # 
@@ -62,11 +32,9 @@ mp <- mp %>% #
 # Condition 2 - many of these are already caught but just to catch the extras 
 mp$Actual[mp$A=='0' & mp$node3=='Au=1'] <- FALSE
 mp$Actual[mp$B=='0' & mp$node3=='Bu=1'] <- FALSE
-```
 
-### The full model: CES, Actual causality, and the posterior
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 mp <- mp %>% 
   mutate(cesmActual = cesm*Actual)
 
@@ -76,11 +44,9 @@ full <- mp %>%
   summarise(full = sum(cesmActual*posterior)) 
 
 
-```
 
 
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 # NEXT GROUP OF LESIONS 
 
 # Uses plain cesm before treatment for Actual
@@ -98,17 +64,9 @@ noActnoInf <- mp %>%  #6
   group_by(pgroup, trialtype, node3, .drop=F) %>% 
   summarise(noActnoInf = sum(cesm*PrUn)) 
 
-```
 
 
-Now lesion the causal selection:
-
-### Lesion causal selection
-
-Need to get the individual posterior, for example, for Au, keep Au fixed and sum the joint posterior for each possible value of Bu. The observed vars get their Actual score only so the innovation is more for the unobserved.
-
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 getpost <- mp %>% # 120 obs of 4
   filter(!node2 %in% c('A','B')) %>% # 
   group_by(pgroup, trialtype, node) %>% 
@@ -136,11 +94,9 @@ postmp <- postmp %>% #
     node2 == 'Bu' ~ post*Actual
   ))
 
-```
 
-Now get the causal score from what we just calculated, for each node value
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 
 noSelect <- postmp %>% 
   group_by(pgroup, trialtype, node3, .drop=F) %>% 
@@ -150,15 +106,9 @@ noActnoSelect <- postmp %>%
   group_by(pgroup, trialtype, node3, .drop=F) %>% 
   summarise(noActnoSelect = mean(Act1)) 
 
-```
 
-Now treat for both inference and causal selection at same time: people select among actual causes almost indiscriminately.
 
-### Lesioning both inference and selection
-
-As before, but it's the prior instead of posterior
-
-```{r, include=FALSE} 
+## ----include=FALSE----------------------------------------------------------------------------------------------
 # As before, but it's the prior instead of posterior
 mp <- mp %>% # 
   mutate(Act3 = case_when(
@@ -171,13 +121,9 @@ mp <- mp %>% #
 noInfnoSelect <- mp %>% 
   group_by(pgroup, trialtype, node3, .drop = F) %>% 
   summarise(noInfnoSelect = mean(Act3))
-```
 
-### Lesioning everything
 
-Assign causal score of C=1 to observed variables if Actual cause, and prior to unobserved variables.
-
-```{r, include=FALSE} 
+## ----include=FALSE----------------------------------------------------------------------------------------------
 
 mp <- mp %>% # 
   mutate(Act2 = case_when(
@@ -190,11 +136,9 @@ mp <- mp %>% #
 noActnoInfnoSelect <- mp %>% 
   group_by(pgroup, trialtype, node3, .drop = F) %>% 
   summarise(noActnoInfnoSelect = mean(Act2))
-```
 
-Now all the models are in same format, we can merge them back together. 
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 df_list <- list(full, 
                 noAct, 
                 noInf, 
@@ -206,23 +150,17 @@ df_list <- list(full,
 
 models <- df_list %>% reduce(full_join, by = c('pgroup', 'trialtype', 'node3'))
 
-```
 
-Also get Actual (and anything else we need to pull in about the conditions? Add it here)
 
-```{r,}
+## ---------------------------------------------------------------------------------------------------------------
 Actual <- mp %>% select(pgroup, trialtype, node3, Actual) %>% unique()
-```
 
-```{r, include=FALSE}
+
+## ----include=FALSE----------------------------------------------------------------------------------------------
 models2 <- merge(models, Actual, all.x = TRUE)
-```
 
-## Summarise participant data in same format
 
-Now bring in participant data:
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 # First set factors so we can use tally
 data$pgroup <- as.factor(data$pgroup)
 data$node3 <- as.factor(data$node3)
@@ -233,15 +171,13 @@ dataNorm <- data %>% # 289
   group_by(pgroup, trialtype, node3, .drop=FALSE) %>% # Here we need the .drop to get all the combinations, otherwise it doesn't give e.g. A=1 when A=0
   tally %>% 
   mutate(prop=n/sum(n))
-```
 
-## Merge models and data
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 modelAndData <- merge(x=dataNorm, y=models2) 
 
 modelAndData <- modelAndData %>% 
   unite('trial_id', pgroup, trialtype, sep = "_", remove = FALSE)
 
-write.csv(modelAndData, '../Model_data/modelAndDataUnfit.csv')  
-```
+write.csv(modelAndData, 'modelAndDataUnfit.csv')  
+
