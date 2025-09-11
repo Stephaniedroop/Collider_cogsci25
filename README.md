@@ -14,7 +14,7 @@ Experiment scripts are html, raw JS and JSPsych.
 
 ## How to run
 
-- For **analysis** go to the `Main_scripts` folder and run `masterscript.R`, or if you know what script you are looking for you can go straight there and run that only. See list of scripts below.
+- For **analysis** go to the `Main_scripts` folder and run `masterscript.R`, or if you know what script you are looking for you can go straight there and run that only. List of scripts below. (I will hopefully have saved each script's data output so you can jump straight to that script, but if for some reason I haven't, you need to run the previous script too).
 - To see the behavioural experiment at https://eco.ppls.ed.ac.uk/~s0342840/collider/collidertop.html. Code for the task interface and structure of running it in JavaScript in in the folder `Experiment`. To click through the experiment: at the comprehension check enter Yes, No, True, 12.
 
 ## Files, folders, model
@@ -33,8 +33,10 @@ The masterscript sources scripts in the following order:
 
 - `set_params.R` - small script to set the different probabilities we want to manipulate for the model and experiment
 - `get_model_preds4.R` - get model predictions
-- `functionsN1.R` - static script of functions used to set up the worlds and run the CESM model
-- `modpred_processing2.R` - get the model predictions in a user-friendly format: Wrangles and renames variables, splits out node values 0 and 1, saves .rdata for each value of stability parameter s
+- `functionsN2.R` - static script of functions used to set up the worlds and run the CESM model
+- `modpred_processing2.R` - get the model predictions in a user-friendly format: Wrangles and renames variables, splits out node values 0 and 1
+
+3.
 
 ### FOLDER Experiment
 
@@ -43,6 +45,10 @@ Holds the Javascript and html to run the behavioural experiment, which is an onl
 ### FOLDER Data, pilot_data
 
 Participant data from the behavioural experiment.
+
+### FOLDER OLD
+
+Can probably delete if everything else works ok
 
 ## Glossary
 
