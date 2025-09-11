@@ -9,20 +9,20 @@ library(ggnewscale) # Download these if you don't have them
 rm(list=ls())
 
 #--------------- 1. Get ppt data  -------------------
-source('preprocessing.R') # Collates individual data of both main batch and pilot
+source('preprocessing.R') # Collates individual data csvs of both main batch and pilot
 
 #------- 2. Create parameters, run cesm, get model predictions and save them ------------
 source('set_params.R')
 
-source('get_model_preds4.R') # 
+source('get_model_preds.R') # 
 # Takes the probability vectors of settings of the variables from `set_params.R`. 
-# Also loads source file `functionsN1.R` for 2 static functions which 1) generate world settings then 
+# Also loads source file `functionsN2.R` for 2 static functions which 1) generate world settings then 
 # model predictions for those and normalise/condition for unobserved variables
 
 # Process model predictions to be more user friendly: 
 # Takes average of 10 model runs
 # Wrangles and renames variables, splits out node values 0 and 1
-source('modpred_processing2.R')  #  
+source('modpred_processing2.R')  
 
 # -------------3. Results: fit model, compare predictions, plot etc
 

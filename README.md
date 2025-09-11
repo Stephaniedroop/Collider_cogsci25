@@ -21,7 +21,7 @@ Experiment scripts are html, raw JS and JSPsych.
 
 ### FOLDER Main_scripts
 
-- `masterscript.R` - top level script to wrangle and process the participant data, run the counterfactual simulations to get model predictions and save them in folder `model_data`, run other model lesions, check model fit, plot all charts, etc. **Go here first**.
+- `masterscriptCogsci25.R` - top level script to wrangle and process the participant data, run the counterfactual simulations to get model predictions and save them in folder `model_data`, run other model lesions, check model fit, plot all charts, etc. **Go here first**.
 
 The masterscript sources scripts in the following order:
 
@@ -32,7 +32,7 @@ The masterscript sources scripts in the following order:
 2. Setting up Collider worlds and getting model predictions for them:
 
 - `set_params.R` - small script to set the different probabilities we want to manipulate for the model and experiment
-- `get_model_preds4.R` - get model predictions
+- `getModelPreds.R` - get model predictions
 - `functionsN2.R` - static script of functions used to set up the worlds and run the CESM model
 - `modpred_processing2.R` - get the model predictions in a user-friendly format: Wrangles and renames variables, splits out node values 0 and 1
 

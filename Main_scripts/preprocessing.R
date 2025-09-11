@@ -37,7 +37,7 @@ condsdf <- as.data.frame(conds) # 2 obs of 21 vars
 
 # ------------ Get pilot data -------------
 # Setwd 
-setwd("../../pilot_data") # This is the later pilot data only, once it was same structure. An earlier pilot was too different a format to use
+setwd("../../Pilot_data") # This is the later pilot data only, once it was same structure. An earlier pilot was too different a format to use
 
 # read in csvs 
 csvList <- lapply(list.files("./"), read.csv, stringsAsFactors = F) # this gives list of 10 when you're in the wd
