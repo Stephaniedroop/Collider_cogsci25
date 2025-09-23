@@ -2,17 +2,10 @@
 ########### Plots for reporting ########################
 ##############################################################
 
-
-rm(list=ls())
-
-
-library(RColorBrewer)
-library(tidyverse)
-
 # read rda
-load('../Data/modelData/fitforplot.rda')
+load(here::here('Data', 'modelData', 'fitforplot.rda'))
 
-#df <- read.csv('fitforplot.csv') # but its rda
+df <- fitforplot
 
 # Very clunky - later we put this in the preprocessing step and save as RDS to keep formatting
 df$trial_type <- recode(df$trial_id, 
@@ -152,10 +145,8 @@ ggplot(df |>
         legend.margin=margin(c(0,0,0,0)),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
 
-
 ## ---------------------------------------------------------------------------------------------------------------
-ggsave('../Figs/results_setting3.pdf', width = 12, height = 4)
-
+ggsave(here('Figs', 'results_setting3.pdf'), width = 12, height = 4)
 
 # Just pgroup 1 and full model
 ggplot(df |> 
@@ -179,7 +170,7 @@ ggplot(df |>
 
 
 ## ---------------------------------------------------------------------------------------------------------------
-ggsave('../Figs/results_setting1.pdf', width = 12, height = 4)
+ggsave(here('Figs', 'results_setting1.pdf'), width = 12, height = 4)
 
 
 # Just pgroup 2 and full model
@@ -204,7 +195,7 @@ ggplot(df |>
 
 
 ## ---------------------------------------------------------------------------------------------------------------
-ggsave('../Figs/results_setting2.pdf', width = 12, height = 4)
+ggsave(here('Figs', 'results_setting2.pdf'), width = 12, height = 4)
 
 
 ## ---------------------------------------------------------------------------------------------------------------
@@ -240,7 +231,7 @@ ggplot(df |>
 
 
 ## ---------------------------------------------------------------------------------------------------------------
-ggsave('../Figs/results_simple_111.pdf', width = 3, height = 3)   
+ggsave(here('Figs', 'results_simple_111.pdf'), width = 3, height = 3) 
 
 
 # A new gathered df to split out observed and unobserved
@@ -270,5 +261,5 @@ stat_summary(fun.data = mean_se, geom = "errorbar",  position = position_dodge(.
 
 
 ## ---------------------------------------------------------------------------------------------------------------
-ggsave('../Figs/results_obs_un.pdf', width = 2, height = 3)  
+ggsave(here('Figs', 'results_obs_un.pdf'), width = 2, height = 3) 
 

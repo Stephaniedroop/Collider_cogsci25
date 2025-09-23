@@ -2,12 +2,10 @@
 ########### Fit models, NLL, optimise parameters ##########
 ##############################################################
 
-library(tidyverse)
-rm(list=ls())
-
 # read in the rda
-load('../Data/modelData/modelAndDataUnfit.rdata') # df: 288 obs of 14
-source('optimUtils.R') # functions for optimisation
+load(here::here('Data', 'modelData', 'modelAndDataUnfit.rda')) # df: 288 obs of 14
+
+df <- modelAndData
 
 # Let's create variables coding the actual observation
 df.map<-data.frame(condition=c('c1','c2','c3','c4','c5','d1','d2','d3','d4','d5','d6','d7'),
@@ -22,7 +20,9 @@ for (i in 1:nrow(df))
   df$E[i]<-df.map$E[df.map$condition==df$trialtype[i]]
 }
 
-# Allocate Boolean status for Include: F for noisy or nonsense answers (e.g. answering A=0 when they can see A=1). This is only for the cogsci paper, to handle 1.4% of data. later we handle it with a noise parameter epsilon
+# Allocate Boolean status for Include: F for noisy or nonsense answers (e.g. answering A=0 when they can see A=1). 
+# This is only for the cogsci paper, to handle 1.4% of data. later we handle it with a noise parameter epsilon
+# It also has the advantage of any var being NA (e.g. if a ppt never answered A=0) being excluded
 df <- df |> 
   mutate(include = !( (node3=='B=0' & B==1) | (node3=='B=1' & B==0) | (node3=='A=0' & A==1) | (node3=='A=1' & A==0)))
 
@@ -57,13 +57,10 @@ df_wide <- newdf |>
   )
 
 
-
 justppt <- df |> 
   select(trial_id, node3, n, prop, pgroup, Actual, A, B, E, include)
 
 fitforplot <- merge(df_wide, justppt, by = c('trial_id', 'node3'))
 
 #save as rda
-save(fitforplot, file = '../Data/modelData/fitforplot.rda')
-#write.csv(fitforplot, 'fitforplot.csv')  
-
+save(fitforplot, file = here::here('Data', 'modelData', 'fitforplot.rda'))

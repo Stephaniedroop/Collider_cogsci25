@@ -2,17 +2,14 @@
 ########### Get the other model modules and lesions ##########
 ##############################################################
 
-
-library(tidyverse)
-library(stringr)
 # Script takes the processed data from the ppt expt (`DATA.RDATA`)
 # and combines it with the preprocessed model predictions from `04modelProcessing.R` (`tidiedPreds.csv`)
 
-rm(list=ls())
+#
+load(here::here('Data', 'Data.Rdata')) # This is one big df, 'data', 3348 obs of 18 ie. 284 ppts (without the 5 very first pilot - they were in paper but not here)
+load(here::here('Data', 'ModelData', 'tidiedPreds.rda')) # 576 of 26 - 576 rows because: 3 pgroups x 12 trialtypes x 4 nodes x 4 prior possible settings of unobserved variables  
 
-## 
-load('../Data/Data.Rdata', verbose = T) # This is one big df, 'data', 3408 obs of 18 ie. 284 ppts
-mp <- read.csv('../Data/ModelData/tidiedPreds.csv') # 576 of 26 - 576 rows because: 3 pgroups x 12 trialtypes x 4 nodes x 4 prior possible settings of unobserved variables  
+mp <- all # For legacy reasons it is renamed in the wholescript, maybe tidy later
 
 mp$pgroup <- as.factor(mp$pgroup)
 mp$node3 <- as.factor(mp$node3)
@@ -35,9 +32,11 @@ mp <- mp |> #
     node2 == 'Bu' ~ Bu==E.x
   ))
 
+
 # Condition 2 - many of these are already caught but just to catch the extras 
 mp$Actual[mp$A=='0' & mp$node3=='Au=1'] <- FALSE
 mp$Actual[mp$B=='0' & mp$node3=='Bu=1'] <- FALSE
+
 
 mp <- mp |> 
   mutate(cesmActual = cesm*Actual)
@@ -148,14 +147,16 @@ df_list <- list(full,
                 noInfnoSelect, 
                 noActnoInfnoSelect) 
 
-models <- df_list |> reduce(full_join, by = c('pgroup', 'trialtype', 'node3'))
+models <- df_list |> 
+  reduce(full_join, by = c('pgroup', 'trialtype', 'node3')) |> 
+  ungroup()
 
+# Get values of Actual for each combination of pgroup, trialtype, node3
+Actual <- mp |>
+  group_by(pgroup, trialtype, node3) |>
+  summarise(Actual = first(Actual), .groups = "drop")
 
-# Get any other info about the conditions 
-Actual <- mp |> 
-  select(pgroup, trialtype, node3, Actual) |> 
-  unique()
-
+# And merge back in
 models2 <- merge(models, Actual, all.x = TRUE)
 
 # --------------- Bring in participant data ----------------
@@ -178,6 +179,4 @@ modelAndData <- modelAndData |>
   unite('trial_id', pgroup, trialtype, sep = "_", remove = FALSE)
 
 # save as rda
-save(modelAndData, file = '../Data/modelData/modelAndDataUnfit.Rdata')
-#write.csv(modelAndData, 'modelAndDataUnfit.csv')  
-
+save(modelAndData, file = here::here('Data', 'modelData', 'modelAndDataUnfit.Rda'))

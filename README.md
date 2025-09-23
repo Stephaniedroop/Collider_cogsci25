@@ -15,7 +15,10 @@ Experiment scripts are html, JS and JSPsych.
 
 ## How to run
 
-- For **analysis** go to the `Scripts` folder and run `master.R`, or if you know what script you are looking for you can go straight there and run that only. List of scripts below. (I will hopefully have saved each script's data output so you can jump straight to that script, but if for some reason I haven't, you need to run the previous script too).
+- For **analysis** workflow, open R from `ColliderCogsci25.Rproj` to load it as a self contained project. Then run `master.R`.
+
+Or if you know what script you are looking for you can go straight there and run that only. List of scripts below. (I will hopefully have saved each script's data output so you can jump straight to that script, but if for some reason I haven't, you need to run the previous script too).
+
 - To see the behavioural experiment at https://eco.ppls.ed.ac.uk/~s0342840/collider/collidertop.html. Code for the task interface and structure of running it in JavaScript in in the folder `Experiment`. To click through the experiment: at the comprehension check enter Yes, No, True, 12.
 
 ## Files, folders, model

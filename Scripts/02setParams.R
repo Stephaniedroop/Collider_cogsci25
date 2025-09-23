@@ -2,9 +2,6 @@
 ###### Collider - save parameters as probability vectors  #####
 ###############################################################
 
-
-rm(list=ls())
-
 # All the params we want, put into a list of 4x2 dfs
 params1 <- data.frame("0"=c(0.9,0.5,0.2,0.5), "1"=c(0.1,0.5,0.8,0.5))
 params2 <- data.frame("0"=c(0.5,0.9,0.5,0.2), "1"=c(0.5,0.1,0.5,0.8))
@@ -15,6 +12,8 @@ names(params1) <- names(params2) <- names(params3) <- c('0','1')
 
 poss_params <- list(params1, params2, params3)
 
-save(file = '../Data/modelData/params.rdata', poss_params)
+# save with here package to not use absolute filepath
+save(poss_params, file = here::here('Data', 'modelData', 'params.rda'))
 
-# Prolly doesnt need to be a separate script but oh well
+
+

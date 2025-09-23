@@ -4,10 +4,8 @@
 # The functions from 'cesmUtils' generated model predictions for CESM only. 
 # To make the full model and all the lesioned version, run this preprocessing step and then combine in '05getLesions'
 
-library(tidyverse)
 
-rm(list=ls())
-all <- read.csv('../Data/ModelData/all.csv') # 1440
+load(here::here('Data', 'ModelData', 'all.rda')) # 1440
 
 all$pgroup <- as.factor(all$pgroup)
 
@@ -80,6 +78,5 @@ all <- all |>
 # d7: 111
 
 
-
-# write this as csv in case need it later - 576 rows because: 3 pgroups x 12 trialtypes x 4 nodes x 4 prior possible settings of unobserved variables  
-write.csv(all, '../Data/ModelData/tidiedPreds.csv')
+# write this - 576 rows because: 3 pgroups x 12 trialtypes x 4 nodes x 4 prior possible settings of unobserved variables  
+save(all, file = here::here('Data', 'ModelData', 'tidiedPreds.rda'))
