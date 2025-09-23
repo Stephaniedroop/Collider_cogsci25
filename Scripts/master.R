@@ -10,6 +10,11 @@ library(ggnewscale) # Load these if you don't have them
 library(here)
 library(RColorBrewer)
 
+# renv::restore()
+# This will install the packages used in the project, as per the lockfile 
+# not sure yet when to do this rather than the library calls above...
+
+
 source(here::here('Scripts', 'cesmUtils.R')) # Functions for running the cesm
 source(here::here('Scripts', 'optimUtils.R')) # Functions for optimising the model fits
 
