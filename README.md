@@ -9,38 +9,45 @@
 
 ## Languages
 
-All analysis scripts are in R, v.4.1. (Packages needed: tidyverse, lme4, lmerTest, stringr, [[purrr, ggnewscale, RColorBrewer]] // TO DO check if definitely use these last ones).
-Experiment scripts are html, raw JS and JSPsych.
+All analysis scripts are in R, v.4.1.
+Packages needed: tidyverse, lme4, lmerTest, stringr, [[purrr, ggnewscale, RColorBrewer]] // TO DO check if definitely use these last ones.
+Experiment scripts are html, JS and JSPsych.
 
 ## How to run
 
-- For **analysis** go to the `Main_scripts` folder and run `masterscript.R`, or if you know what script you are looking for you can go straight there and run that only. List of scripts below. (I will hopefully have saved each script's data output so you can jump straight to that script, but if for some reason I haven't, you need to run the previous script too).
+- For **analysis** go to the `Scripts` folder and run `master.R`, or if you know what script you are looking for you can go straight there and run that only. List of scripts below. (I will hopefully have saved each script's data output so you can jump straight to that script, but if for some reason I haven't, you need to run the previous script too).
 - To see the behavioural experiment at https://eco.ppls.ed.ac.uk/~s0342840/collider/collidertop.html. Code for the task interface and structure of running it in JavaScript in in the folder `Experiment`. To click through the experiment: at the comprehension check enter Yes, No, True, 12.
 
 ## Files, folders, model
 
 ### FOLDER Main_scripts
 
-- `masterscriptCogsci25.R` - top level script to wrangle and process the participant data, run the counterfactual simulations to get model predictions and save them in folder `model_data`, run other model lesions, check model fit, plot all charts, etc. **Go here first**.
+- `master.R` - top level script to wrangle and process the participant data, run the counterfactual simulations to get model predictions and save them in folder `modelData`, run other model lesions, check model fit, plot all charts, etc. **Go here first**.
 
 The masterscript sources scripts in the following order:
 
 1. Processing behavioural experiment data (see folder `Experiment` for the JS code of experiment):
 
-- `preprocessing.R` - Collates individual data csvs of both main batch and pilot.
+- `01preprocessing.R` - Collates individual data csvs of both main batch and pilot.
 
 2. Setting up Collider worlds and getting model predictions for them:
 
-- `setParams.R` - small script to set the different probabilities we want to manipulate for the model and experiment
-- `getModelPreds.R` - get model predictions
-- `functionsN2.R` - static script of functions used to set up the worlds and run the CESM model
-- `modelProcessing.R` - get the model predictions in a user-friendly format: Wrangles and renames variables, splits out node values 0 and 1
+- `02setParams.R` - small script to set the different probabilities we want to manipulate for the model and experiment
+- `03getModelPreds.R` - get model predictions. Loads static `cesmUtils.R` functions used to set up the worlds and run the CESM model.
+- `04modelProcessing.R` - get the model predictions in a user-friendly format: Wrangles and renames variables, splits out node values 0 and 1
 
 3. Lesioning models, combining with participants, optimising, plotting
 
-- `modelCombLesions.Rmd`
-- `optimise.Rmd`
-- `reportingFigs.Rmd`
+- `05getLesions.R`
+- `06optimise.R` - loads static `optimUtils.R` functions
+- `07reportingFigs.R`
+
+4. Supplementary analyses
+
+### These haven't been updated since May 2025 and may not work out of the box
+
+- `08itemLevelChisq.R` - Check ppt n against a uniform distribution
+- `09abnormalInflation.R` Is the phenomenon found in our results?
 
 ### FOLDER Experiment
 
@@ -49,6 +56,8 @@ Holds the Javascript and html to run the behavioural experiment, which is an onl
 ### FOLDER Data, pilot_data
 
 Participant data from the behavioural experiment.
+
+- `Data/modelData` - a place to put the processed predictions
 
 ### FOLDER OLD
 

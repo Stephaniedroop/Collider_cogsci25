@@ -1,13 +1,13 @@
 ####################################################### 
 ###### Collider - tidy up model predictions FULL  #####
 #######################################################
-# The functions from 'functions2' generated model predictions for CESM only. 
-# To make the full model and all the lesioned version, run this preprocessing step and then combine in 'modelCombLesions'
+# The functions from 'cesmUtils' generated model predictions for CESM only. 
+# To make the full model and all the lesioned version, run this preprocessing step and then combine in '05getLesions'
 
-#library(tidyverse)
+library(tidyverse)
 
 rm(list=ls())
-all <- read.csv('../Model_data/all.csv') # 1440
+all <- read.csv('../Data/ModelData/all.csv') # 1440
 
 all$pgroup <- as.factor(all$pgroup)
 
@@ -28,15 +28,18 @@ all$trialtype[all$trialtype==4 & all$structure=='conjunctive'] <- 'c4'
 all$trialtype[all$trialtype==5 & all$structure=='conjunctive'] <- 'c5'
 
 # First we have to average the model runs - goes from 1920 to 192
-all <- all %>% group_by(pgroup, structure, index) %>% 
-  mutate(A_cesm = mean(mA), Au_cesm = mean(mAu), B_cesm = mean(mB), Bu_cesm = mean(mBu)) %>% 
+all <- all |> 
+  group_by(pgroup, structure, index) |> 
+  mutate(A_cesm = mean(mA), Au_cesm = mean(mAu), B_cesm = mean(mB), Bu_cesm = mean(mBu)) |> 
   distinct(pgroup, structure, index, .keep_all = TRUE)
 
 
 # Pivot longer and list node names with their CESM values
-all <- all %>% pivot_longer(cols = c(A_cesm:Bu_cesm), names_to = c('node', '.value'), names_sep = '_') 
+all <- all |> 
+  pivot_longer(cols = c(A_cesm:Bu_cesm), names_to = c('node', '.value'), names_sep = '_') 
 
-all <- all %>% select(-(mA:run))
+all <- all |> 
+  select(-(mA:run))
 
 # 768 is then 1920/10 = 192 x 4 variables
 
@@ -56,7 +59,8 @@ all$node3[all$B=='0' & all$node2=='B'] <- 'B=0'
 all$node3[all$B=='1' & all$node2=='B'] <- 'B=1'
 
 # Get a tag of the unobserved variables' settings. Then we can group data by this for plotting
-all <- all %>% unite("uAuB", Au,Bu, sep= "", remove = FALSE)
+all <- all |> 
+  unite("uAuB", Au,Bu, sep= "", remove = FALSE)
 
 # ------- 
 
@@ -78,4 +82,4 @@ all <- all %>% unite("uAuB", Au,Bu, sep= "", remove = FALSE)
 
 
 # write this as csv in case need it later - 576 rows because: 3 pgroups x 12 trialtypes x 4 nodes x 4 prior possible settings of unobserved variables  
-write.csv(all, '../Model_data/tidiedPreds.csv')
+write.csv(all, '../Data/ModelData/tidiedPreds.csv')

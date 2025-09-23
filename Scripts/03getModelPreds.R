@@ -5,8 +5,11 @@
 # and save the model predictions for each run
 
 rm(list=ls())
-setwd("../Main_scripts")
-library(tidyverse)
+#setwd("../Main_scripts")
+#library(tidyverse)
+
+# Load functions for cesm: world_combos, get_cfs 
+source('cesmUtils.R')
 
 # Other values set outside for now 
 N_cf <- 100000L # How many counterfactual samples to draw
@@ -15,11 +18,7 @@ s <- 0.7
 
 causes1 <- c('A', 'Au', 'B', 'Bu')
 
-load('../model_data/params.rdata', verbose = T) # defined in script `setParams.r`
-
-
-# Load functions: world_combos, get_cfs 
-source('functionsN2.R')
+load('../Data/modelData/params.rdata', verbose = T) # defined in script `setParams.r`
 
 set.seed(12)
 
@@ -51,4 +50,4 @@ for (i in 1:length(poss_params)) {
 } 
 # It takes a minute or two but not terrible.
 
-write.csv(all, "../model_data/all.csv") # 1440 of 26
+write.csv(all, "../Data/modelData/all.csv") # 1440 of 26

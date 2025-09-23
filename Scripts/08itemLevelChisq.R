@@ -1,27 +1,15 @@
----
-title: "modelcheckplot"
-output: html_document
-date: "2025-01-22"
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE---------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 library(ggnewscale)
 library(tidyverse)
-```
 
-## Check item level correlation and other summary reporting statistics.
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 df <- read.csv('modelAndDataUnfit.csv') # 288 obs of 14
 
-```
 
 
-Now a chi-sq for anti-uniform fit. Need to first group by world, and do a series of 36 chisq.
-
-
-```{r}
+## ---------------------------------------------------------------------------------------------------------------
 results <- df %>%
   group_by(pg_tt) %>%
   summarise(
@@ -34,16 +22,13 @@ results <- df %>%
 
 print(results)
 
-```
 
-An old one for the df as a whole: we don't use this any more:
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 observed <- df$n
 expected <- rep((sum(df$n)/length(df$n))/sum(df$n), length(df$n))
 
 chi_sq_result <- chisq.test(x=df$n, p = expected)
 print(chi_sq_result)
 
-```
 

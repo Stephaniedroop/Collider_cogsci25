@@ -1,21 +1,10 @@
----
-title: "modelcheckplot"
-output: html_document
-date: "2025-01-22"
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE---------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 library(ggnewscale)
 library(tidyverse)
-```
 
-## Check fit of CESM and 'LCStac' 
-### (model lesioned to have no Causal Selection, but still has inference, and treated for actual causality) against participants
 
-WE DON'T EVEN NEED THE MODEL DATA FOR THIS ---- EVENTUALLY DELETE DOWN TO WHERE THE DATA IS BROUGHT IN
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 df <- read.csv('modelAndDataUnfit.csv') # 288 obs of 14
 
 # df <- read.csv('df.csv') This was what was made in `optimise_modelSD.R' but repeated here to always pull from the same csv
@@ -68,9 +57,9 @@ df <- df %>%
 # Now 72 obs of 16
 
 
-```
 
-```{r, include=FALSE}
+
+## ----include=FALSE----------------------------------------------------------------------------------------------
 
 df <- df %>% # 216 of 11
   select(-X, -X.1, -cesmf, -scoreLCStac) %>% 
@@ -82,11 +71,9 @@ df$pgroup <- as.factor(df$pgroup)
 df$trialtype <- as.factor(df$trialtype)
 df$node3 <- as.factor(df$node3)
 
-```
 
 
-
-```{r, echo=FALSE}
+## ----echo=FALSE-------------------------------------------------------------------------------------------------
 # ------------ 4. Plot -----------------
 # We want to put conj and disc trialtypes on the same plot. 
 # But the trialtype names 'c1' etc are not informative
@@ -106,17 +93,9 @@ trialspec <- c('Disj: A=1, B=1, | E=1',
 
 # Which can conveniently is alphanumeric and be mapped using unique vals from the trialtype factor
 trialvalsvec <- as.vector(levels(df$trialtype)) %>% sort(decreasing = TRUE)
-```
 
-Select just the four trial types where E=1. Plotted for each probability group separately. 
 
-Probabilities given in order p(A==1), p(Au==1), p(B==1), p(Bu==1).
-
-### pgroup1:
-
-Where A doesn't often happen, B does often happen, and Au and Bu are steady.
-
-```{r, echo=FALSE, warning=FALSE}
+## ----echo=FALSE, warning=FALSE----------------------------------------------------------------------------------
 pw1 <- df %>%
   filter(pgroup=='1') %>% 
   ggplot(aes(x = node3, y = percent, colour = name)) + # Alpha shading shows what is a coherent answer , alpha = isPerm
@@ -133,13 +112,9 @@ pw1
 
 #ggsave('pw.pdf', plot=pw, width = 7, height = 5, units = 'in')
 
-```
 
-### pgroup2: 
 
-Where A and B are steady, but A doesn't often work, and B does often work (Au low and Bu high).
-
-```{r, echo=FALSE, warning=FALSE}
+## ----echo=FALSE, warning=FALSE----------------------------------------------------------------------------------
 pw2 <- df %>%
   filter(pgroup=='2') %>% 
   ggplot(aes(x = node3, y = percent, colour = name)) + # Alpha shading shows what is a coherent answer , alpha = isPerm
@@ -156,12 +131,9 @@ pw2
 
 #ggsave('pw.pdf', plot=pw, width = 7, height = 5, units = 'in')
 
-```
-
-### pgroup3:
 
 
-```{r, echo=FALSE, warning=FALSE}
+## ----echo=FALSE, warning=FALSE----------------------------------------------------------------------------------
 pw3 <- df %>%
   filter(pgroup=='3') %>% 
   ggplot(aes(x = node3, y = percent, fill = name)) + # Alpha shading shows what is a coherent answer , alpha = isPerm
@@ -178,27 +150,17 @@ pw3
 
 ggsave('../figs/Reporting/pw3.pdf', plot=pw3, width = 4.2, height = 3, units = 'in')
 
-```
 
 
-above here is holdover from old script - remembre to delete
-
-## Check for significance and abnormal inflation
-
-Test for significance
-
-Get trialtypes d7 and c5 (111), for pgroups 1 and 3, for individual observations, and tag with whether or not they selected the lower-probability variable 
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 load('../Data/Data.Rdata', verbose = T) # This is one big df, 'data', 3408 obs of 18 ie. 284 ppts
 
 data <- data %>% 
   unite('pg_tt', pgroup, trialtype, sep = "_", remove = FALSE)
 
-```
 
 
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 dfab <- data %>% 
   filter(pgroup %in% c(1, 3),
          trialtype %in% c('c5', 'd7'),
@@ -219,12 +181,9 @@ dfab <- dfab %>%
 # 1: B=1, A=0 ie B is 1 more often, B is more normal
 # 3: B=1, A=0 ie B is 1 more often, B is more normal
 
-```
 
 
-And for an lme4 significance test
-
-```{r, include=FALSE}
+## ----include=FALSE----------------------------------------------------------------------------------------------
 #library(lme4)
 library(lmerTest)
 
@@ -241,6 +200,4 @@ upper_logodds <- coef+(1.96*.3387)
 lower_or <- exp(lower_logodds)
 upper_or <- exp(upper_logodds)
 
-```
 
-Does this now need transformed? How?

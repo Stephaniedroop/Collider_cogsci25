@@ -1,36 +1,20 @@
----
-title: "modelfitplots"
-output: html_document
-date: "2025-03-12"
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-# Summary
-
-Takes model and data in csv called `fitforplotnoK.csv` which was made in `optimise_noK.Rmd`. 
+##############################################################
+########### Plots for reporting ########################
+##############################################################
 
 
+rm(list=ls())
 
-```{r, include=FALSE}
+
 library(RColorBrewer)
 library(tidyverse)
-```
 
-```{r}
-df <- read.csv('fitforplotnoK.csv') # 216 obs of 18 - only the actual values of A/B
-#df[is.na(df)] <- 0
+# read rda
+load('../Data/modelData/fitforplot.rda')
 
-```
+#df <- read.csv('fitforplot.csv') # but its rda
 
-
-
-
-```{r, include=FALSE}
-
-
+# Very clunky - later we put this in the preprocessing step and save as RDS to keep formatting
 df$trial_type <- recode(df$trial_id, 
                       "1_c1"="A=0,B=0,E=0",
                       "1_c2"="A=0,B=1,E=0",
@@ -107,7 +91,8 @@ df$trial_structure_type <- recode(df$trial_id,
                                 "3_d6"="Disjunctive: A=1,B=1,E=0",
                                 "3_d7"="Disjunctive: A=1,B=1,E=1")
 
-df<- df %>% mutate(trial_type = factor(trial_type, levels = c("A=0,B=0,E=0",
+df<- df |> 
+  mutate(trial_type = factor(trial_type, levels = c("A=0,B=0,E=0",
                                                               "A=0,B=1,E=0",
                                                               "A=0,B=1,E=1",
                                                               "A=1,B=0,E=0",
@@ -137,61 +122,26 @@ df<- df %>% mutate(trial_type = factor(trial_type, levels = c("A=0,B=0,E=0",
                    Actual = factor(Actual, levels = c(FALSE, TRUE), labels = c('FALSE', 'TRUE')))
 
 
-```
 
-
-
-### So now to plot! Fig.3
-
-Need to add SE 
-
-```{r}
-df$SE <- NA
-
-
+# For standard error bars
 for (i in unique(df$trial_id))
 {
-  df$SE[df$trial_id==i]<-sqrt((df$prop[df$trial_id==i] * (1-df$prop[df$trial_id==i])) / sum(df$n[df$trial_id==i]))
+  df$SE[df$trial_id==i] <- sqrt((df$prop[df$trial_id==i] * 
+                                   (1-df$prop[df$trial_id==i])) / 
+                                  sum(df$n[df$trial_id==i]))
 }
 
-```
 
 
-
-```{r, include=FALSE}
-ggplot(df %>% filter(pgroup=='A=.1,Au=.7,B=.8,Bu=.5'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
+# Just pgroup 3 and full model
+ggplot(df |> 
+         filter(pgroup=='A=.1,Au=.7,B=.8,Bu=.5'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
   geom_bar(stat = 'identity') +
   geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2) + 
   labs(x = 'Response', y = 'Proportion/Prediction')+
   scale_fill_brewer(palette = "Set2")+
   scale_colour_manual(values = c('gray', 'black')) +
-  geom_point(aes(y=full), colour = 'black') +
-  geom_rect(data = subset(df, trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1")), 
-            fill = NA, colour = "blue", xmin = -Inf,xmax = Inf, linewidth = 2,
-            ymin = -Inf,ymax = Inf) +
-  facet_wrap( ~ trial_structure_type, ncol = 6) +
-  theme_bw() +
-  theme(panel.grid = element_blank(),
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-        legend.margin=margin(c(0,0,0,0)),
-        axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
-```
-
-```{r}
-ggsave('resultsnoK.pdf', width = 12, height = 4)
-```
-
-# Do same for other pgroups
-
-
-```{r, include=FALSE}
-ggplot(df %>% filter(pgroup=='A=.1,Au=.5,B=.8,Bu=.5'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
-  geom_bar(stat = 'identity') +
-  geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2) + 
-  labs(x = 'Response', y = 'Proportion/Prediction')+
-  scale_fill_brewer(palette = "Set2")+
-  scale_colour_manual(values = c('gray', 'black')) +
-  geom_point(aes(y=full), colour = 'black') +
+  geom_point(aes(y=full), colour = 'black') + # CHANGE MODEL NAME HERE
   geom_rect(data = subset(df, trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1")), 
             fill = NA, colour = "blue", xmin = -Inf,xmax = Inf, linewidth = 2,
             ymin = -Inf,ymax = Inf) +
@@ -202,17 +152,14 @@ ggplot(df %>% filter(pgroup=='A=.1,Au=.5,B=.8,Bu=.5'), aes(x=node3, y=prop, fill
         legend.margin=margin(c(0,0,0,0)),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
 
-```
 
-```{r}
-ggsave('results_setting1.pdf', width = 12, height = 4)
-```
+## ---------------------------------------------------------------------------------------------------------------
+ggsave('../Figs/results_setting3.pdf', width = 12, height = 4)
 
 
-
-
-```{r, include=FALSE}
-ggplot(df %>% filter(pgroup=='A=.5,Au=.1,B=.5,Bu=.8'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
+# Just pgroup 1 and full model
+ggplot(df |> 
+         filter(pgroup=='A=.1,Au=.5,B=.8,Bu=.5'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
   geom_bar(stat = 'identity') +
   geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2) + 
   labs(x = 'Response', y = 'Proportion/Prediction')+
@@ -229,20 +176,38 @@ ggplot(df %>% filter(pgroup=='A=.5,Au=.1,B=.5,Bu=.8'), aes(x=node3, y=prop, fill
         legend.margin=margin(c(0,0,0,0)),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
 
-```
-
-```{r}
-ggsave('results_setting2.pdf', width = 12, height = 4)
-```
 
 
-(We also plan a shiny app to compare other model predictions, check back later to see if we've done it yet)
+## ---------------------------------------------------------------------------------------------------------------
+ggsave('../Figs/results_setting1.pdf', width = 12, height = 4)
 
-# Fig 4 - just the 111 for abnormal inflation
 
-For now just 'simple 111' and 'obs un'
+# Just pgroup 2 and full model
+ggplot(df |> 
+         filter(pgroup=='A=.5,Au=.1,B=.5,Bu=.8'), aes(x=node3, y=prop, fill=Observed, colour = Actual)) +
+  geom_bar(stat = 'identity') +
+  geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2) + 
+  labs(x = 'Response', y = 'Proportion/Prediction')+
+  scale_fill_brewer(palette = "Set2")+
+  scale_colour_manual(values = c('gray', 'black')) +
+  geom_point(aes(y=full), colour = 'black') +
+  geom_rect(data = subset(df, trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1")), 
+            fill = NA, colour = "blue", xmin = -Inf,xmax = Inf, linewidth = 2,
+            ymin = -Inf,ymax = Inf) +
+  facet_wrap( ~ trial_structure_type, ncol = 6) +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        legend.margin=margin(c(0,0,0,0)),
+        axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
 
-```{r}
+
+
+## ---------------------------------------------------------------------------------------------------------------
+ggsave('../Figs/results_setting2.pdf', width = 12, height = 4)
+
+
+## ---------------------------------------------------------------------------------------------------------------
 row_labeller <- c(
   "A=.1,Au=.5,B=.8,Bu=.5"=".1,.5,.8,.5",
   "A=.5,Au=.1,B=.5,Bu=.8"=".5,.1,.5,.8",
@@ -253,16 +218,17 @@ column_labeller <- c(
   "Conjunctive: A=1,B=1,E=1"="Conjunctive",
   "Disjunctive: A=1,B=1,E=1"="Disjunctive"
 )
-```
 
-```{r}
-ggplot(df %>% filter(trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1"), Actual == T),
+
+# Just the 111 cases
+ggplot(df |> 
+         filter(trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1"), Actual == T),
        aes(x=Variable, y=prop, fill=Observed)) +
   geom_bar(stat = 'identity', colour = 'black', position = position_dodge()) +
   geom_errorbar(aes(ymin=prop-SE, ymax=prop+SE), width=.2, position = position_dodge(.9)) + 
   labs(x = 'Response', y = 'Proportion/Prediction')+
   scale_fill_brewer(palette = "Set2")+
-  geom_point(data = df %>% filter(trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1"), Actual==T), aes(y=full), colour = 'black', position = position_dodge(.9)) +
+  geom_point(data = df |> filter(trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Disjunctive: A=1,B=1,E=1"), Actual==T), aes(y=full), colour = 'black', position = position_dodge(.9)) +
   # geom_point(aes(y=noInf), colour = 'black', shape = 2) +
   # geom_point(aes(y=noSelect), colour = 'black', shape = 3) +
   facet_grid(trial_structure_type ~ pgroup,
@@ -271,24 +237,23 @@ ggplot(df %>% filter(trial_structure_type %in% c("Conjunctive: A=1,B=1,E=1", "Di
   theme(panel.grid = element_blank(),
         legend.position = 'none',
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
-```
-
-```{r}
-ggsave('results_simple_111.pdf', width = 3, height = 3)   
-```
 
 
-```{r}
-df.l<-df %>% 
-  gather(key, val, c(prop, full)) %>% 
+## ---------------------------------------------------------------------------------------------------------------
+ggsave('../Figs/results_simple_111.pdf', width = 3, height = 3)   
+
+
+# A new gathered df to split out observed and unobserved
+df.l <- df |> 
+  gather(key, val, c(prop, full)) |> 
   mutate(key = factor(key, 
                       levels = c('prop', 'full'),
-                      labels = c("Participants", "Full Model"))) %>%
-  group_by(Observed, key, trial_structure_type) %>% 
+                      labels = c("Participants", "Full Model"))) |>
+  group_by(Observed, key, trial_structure_type) |> 
   summarise(val = sum(val)/3)
-```
 
-```{r}
+
+## ---------------------------------------------------------------------------------------------------------------
 ggplot(df.l, aes(y=val, x=key, fill=Observed)) +
   stat_summary(fun = mean,
                geom = "bar",
@@ -302,15 +267,8 @@ stat_summary(fun.data = mean_se, geom = "errorbar",  position = position_dodge(.
         legend.margin=margin(c(0,0,0,0)),
         legend.position = c(-.1,-.2),
         axis.title.x = element_text(margin = margin(t = 1, r =0, b = 0, l = 0))) 
-```
 
 
-```{r}
-ggsave('results_obs_un.pdf', width = 2, height = 3)  
-```
-
-
-
-
-
+## ---------------------------------------------------------------------------------------------------------------
+ggsave('../Figs/results_obs_un.pdf', width = 2, height = 3)  
 
