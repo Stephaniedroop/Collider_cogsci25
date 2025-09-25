@@ -2,6 +2,10 @@
 ########### Fit models, NLL, optimise parameters ##########
 ##############################################################
 
+library(here)
+library(tidyverse)
+source(here('Scripts', 'optimUtils.R')) # Functions for optimising the model fits
+
 # read in the rda
 load(here::here('Data', 'modelData', 'modelAndDataUnfit.rda')) # df: 288 obs of 14
 

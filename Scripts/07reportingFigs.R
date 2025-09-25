@@ -2,6 +2,13 @@
 ########### Plots for reporting ########################
 ##############################################################
 
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(ggnewscale) 
+library(RColorBrewer)
+
+
 # read rda
 load(here::here('Data', 'modelData', 'fitforplot.rda'))
 

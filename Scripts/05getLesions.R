@@ -5,6 +5,9 @@
 # Script takes the processed data from the ppt expt (`DATA.RDATA`)
 # and combines it with the preprocessed model predictions from `04modelProcessing.R` (`tidiedPreds.csv`)
 
+library(here)
+library(tidyverse)
+
 #
 load(here::here('Data', 'Data.Rdata')) # This is one big df, 'data', 3348 obs of 18 ie. 284 ppts (without the 5 very first pilot - they were in paper but not here)
 load(here::here('Data', 'ModelData', 'tidiedPreds.rda')) # 576 of 26 - 576 rows because: 3 pgroups x 12 trialtypes x 4 nodes x 4 prior possible settings of unobserved variables  

@@ -4,6 +4,9 @@
 # Script to set up probability vectors of each variable, then run a series of 3 source files to implement the cesm
 # and save the model predictions for each run
 
+library(here)
+library(tidyverse)
+source(here('Scripts', 'cesmUtils.R')) # Functions for running the cesm
 
 # Other values set outside for now 
 N_cf <- 100000L # How many counterfactual samples to draw
@@ -12,7 +15,7 @@ s <- 0.7
 
 causes1 <- c('A', 'Au', 'B', 'Bu')
 
-load(here::here('Data', 'modelData', 'params.rda'), verbose = T)
+load(here('Data', 'modelData', 'params.rda'))
 # defined in script `setParams.r`
 
 set.seed(12)
@@ -45,5 +48,5 @@ for (i in 1:length(poss_params)) {
 } 
 # It takes a minute or two but not terrible.
 
-save(all, file = here::here("Data", "modelData", "all.rda"))
+save(all, file = here("Data", "modelData", "all.rda"))
 

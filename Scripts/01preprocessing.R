@@ -7,6 +7,11 @@
 # (there were 5 before with differnet data structure, needing different preprocessing, they are also brought in here)
 # Then saves big data df, and also that data split out into the three probability groups
 
+library(tidyverse)
+library(here)
+library(rjson)
+library(here)
+
 # ---------- Get main data -----------
 # Get individual csvs into a list
 csvList <- lapply(list.files(here("Data", "batch"), full.names = TRUE), 

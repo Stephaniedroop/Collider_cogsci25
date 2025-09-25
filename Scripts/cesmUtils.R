@@ -11,6 +11,8 @@
 # -- simulates counterfactuals by resampling from the prior for vars with p=1-s where s=stability to real world.
 # -- prints out correlation of effect with each causal variable across these simulated counterfactual worlds.
 
+library(tidyverse)
+
 # ------------- Create world combos df ----------------- 
 # A function to get all world combinations
 
